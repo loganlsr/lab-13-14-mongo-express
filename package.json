@@ -4,7 +4,7 @@
   "description": "![cf](https://i.imgur.com/7v5ASc8.png) lab 13 single resource express/mongo api ======",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "DEBUG='apple*' ./node_modules/mocha/bin/mocha",
     "start": "DEBUG='apple*' node server.js"
   },
   "repository": {

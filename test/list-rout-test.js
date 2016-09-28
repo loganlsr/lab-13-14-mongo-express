@@ -54,11 +54,12 @@ describe('testing route /api/list', function(){
         .then( list => {
           this.tempList = list;
           done();
-        });
+        })
+        .catch(done);
       });
 
       after( done => {
-        delete(exampleList.timestamp);
+        delete exampleList.timestamp;
         if(this.tempList){
           List.remove({})
           .then(() => done())
@@ -70,14 +71,12 @@ describe('testing route /api/list', function(){
 
       it('should return a list', done => {
         request.get(`${url}/api/list/${this.tempList._id}`)
-        .send(exampleList)
         .end((err, res) => {
           if (err) return done(err);
           expect(res.status).to.equal(200);
           expect(res.body.type).to.equal('rainbow');
           expect(res.body.color).to.equal('multi-colored');
           expect(res.body.size).to.equal('huge');
-          this.tempList = res.body;
           done();
         });
       });
