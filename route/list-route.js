@@ -2,6 +2,7 @@
 
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
+const createError = require('http-errors');
 
 const List = require('../model/list.js');
 
@@ -18,4 +19,16 @@ listRouter.get('/api/list/:id', function(req, res, next){
   List.findById(req.params.id)
   .then(list => res.json(list))
   .catch(next);
+});
+
+listRouter.delete('/api/list/:id', function(req, res, next){
+  List.findByIdAndDelete(req.params.id)
+  .then(() => res.sendstatus(204))
+  .catch(err => next(createError(404, err.message)));
+});
+
+listRouter.put('/api/list/:id', jsonParser, function(req, res, next){
+  List.findByIdAndUpdate(req.params.id, req.body, {new: true})
+  .then(list => res.json(list))
+  .catch(err => next(createError(404, err.message)));
 });
