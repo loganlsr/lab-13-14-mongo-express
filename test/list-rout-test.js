@@ -95,22 +95,22 @@ describe('testing route /api/list', function(){
     });
   });
 
-  describe('Testing DELETE /api/apple:id requests', function() {
+  describe('testing DELETE requests', function() {
 
     describe('with valid id', function() {
 
       before( done => {
         exampleList.timestamp = new Date();
         new List(exampleList).save()
-        .then( apple => {
-          this.tempApple = apple;
+        .then( list => {
+          this.tempList = list;
           done();
         })
         .catch(done);
       });
 
-      it('should delete an apple and give status code 204', done => {
-        request.delete(`${url}/api/apple/${this.tempApple._id}`)
+      it('should delete an item and give status code 204', done => {
+        request.delete(`${url}/api/list/${this.tempList._id}`)
         .end((err, res) => {
           if (err) return done(err);
           expect(res.status).to.equal(204);
@@ -122,7 +122,7 @@ describe('testing route /api/list', function(){
     describe('for a file that does not exist', function() {
 
       it('should 404 not found', done => {
-        request.delete(`${url}/api/apple/no-apple`)
+        request.delete(`${url}/api/list/no-apple`)
         .end((err, res) => {
           expect(res.status).to.equal(404);
           done();
@@ -131,4 +131,30 @@ describe('testing route /api/list', function(){
     });
   });
 
+  describe('testing PUT requests', function() {
+
+    before( done => {
+      exampleList.timestamp = new Date();
+      new List(exampleList).save()
+      .then( list => {
+        this.tempList = list;
+        done();
+      })
+      .catch(done);
+    });
+
+    after( done => {
+      delete exampleList.timestamp;
+      if(this.tempList){
+        List.remove({})
+        .then(() => done())
+        .catch(done);
+        return;
+      }
+      done();
+    });
+
+
+
+  });
 });
