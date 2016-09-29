@@ -16,6 +16,7 @@ const exampleList = {
 };
 
 describe('testing route /api/list', function(){
+
   describe('testing POST requests', function(){
     describe('with valid body', function(){
 
@@ -45,7 +46,7 @@ describe('testing route /api/list', function(){
     });
   });
 
-  describe('testing POST requests', function(){
+  describe('testing GET requests', function(){
     describe('with valid body', function(){
 
       before( done => {
@@ -81,5 +82,53 @@ describe('testing route /api/list', function(){
         });
       });
     });
+
+    describe('for a file that does not exist', function() {
+
+      it('should give error code 404 if no id', done => {
+        request.get(`${url}/api/apple/no-apple`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });
   });
+
+  describe('Testing DELETE /api/apple:id requests', function() {
+
+    describe('with valid id', function() {
+
+      before( done => {
+        exampleList.timestamp = new Date();
+        new List(exampleList).save()
+        .then( apple => {
+          this.tempApple = apple;
+          done();
+        })
+        .catch(done);
+      });
+
+      it('should delete an apple and give status code 204', done => {
+        request.delete(`${url}/api/apple/${this.tempApple._id}`)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.status).to.equal(204);
+          done();
+        });
+      });
+    });
+
+    describe('for a file that does not exist', function() {
+
+      it('should 404 not found', done => {
+        request.delete(`${url}/api/apple/no-apple`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });
+  });
+
 });
