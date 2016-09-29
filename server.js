@@ -10,6 +10,8 @@ const Promise = require('bluebird');
 
 // app modules
 const listRouter = require('./route/list-route.js');
+const appleRouter = require('./route/apple-route.js');
+const errorMiddleware = require('./lib/error-middleware.js');
 
 // module constants
 const PORT = process.env.PORT || 3000;
@@ -25,6 +27,8 @@ app.use(morgan('dev'));
 
 
 app.use(listRouter);
+app.use(appleRouter);
+app.use(errorMiddleware);
 
 const server = module.exports = app.listen(PORT, function(){
   debug(`server up ${PORT}`);

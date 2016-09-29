@@ -13,6 +13,13 @@ const exampleList = {
   type: 'rainbow',
   color: 'multi-colored',
   size: 'huge',
+  timestamp: new Date(),
+};
+
+const exampleApple = {
+  type: 'rainbow',
+  color: 'multi-colored',
+  size: 'huge',
 };
 
 describe('testing route /api/list', function(){
@@ -54,13 +61,16 @@ describe('testing route /api/list', function(){
         new List(exampleList).save()
         .then( list => {
           this.tempList = list;
+          return List.findByIdAndAddApple(list._id, exampleApple);
+        })
+        .then( apple => {
+          this.tempApple = apple;
           done();
         })
         .catch(done);
       });
 
       after( done => {
-        delete exampleList.timestamp;
         if(this.tempList){
           List.remove({})
           .then(() => done())
@@ -78,6 +88,8 @@ describe('testing route /api/list', function(){
           expect(res.body.type).to.equal('rainbow');
           expect(res.body.color).to.equal('multi-colored');
           expect(res.body.size).to.equal('huge');
+          expect(res.body.apples.length).to.equal(1);
+          expect(res.body.apples[0].name).to.equal(exampleApple.name);
           done();
         });
       });
@@ -133,10 +145,10 @@ describe('testing route /api/list', function(){
   });
 
   describe('testing PUT requests', function() {
+
     describe('with valid id', function(){
 
       before( done => {
-        exampleList.timestamp = new Date();
         new List(exampleList).save()
         .then( list => {
           this.tempList = list;
@@ -146,7 +158,6 @@ describe('testing route /api/list', function(){
       });
 
       after( done => {
-        delete exampleList.timestamp;
         if(this.tempList){
           List.remove({})
           .then(() => done())
@@ -166,6 +177,8 @@ describe('testing route /api/list', function(){
           expect(res.body.type).to.equal(updateData.type);
           expect(res.body.color).to.equal(updateData.color);
           expect(res.body.size).to.equal(updateData.size);
+          let timestamp = new Date(res.body.timestamp);
+          expect(timestamp.toString()).to.equal(exampleList.timestamp.toString());
           this.tempList = res.body;
           done();
         });
@@ -185,7 +198,6 @@ describe('testing route /api/list', function(){
       });
 
       after( done => {
-        delete exampleList.timestamp;
         if(this.tempList) {
           List.remove({})
           .then(() => done())
@@ -219,4 +231,41 @@ describe('testing route /api/list', function(){
     });
   });
 
+  describe('testing GET requests with pagination', function(){
+    describe('with valid body', function(){
+
+      before( done => {
+        var lists = [];
+        for (var i = 0; i < 1000; i++){
+          lists.push(new List(exampleList).save());
+        }
+        Promise.all(lists)
+        .then( lists => {
+          this.tempLists = lists;
+          done();
+        })
+        .catch(done);
+      });
+
+      after( done => {
+        if(this.tempLists){
+          List.remove({})
+          .then(() => done())
+          .catch(done);
+          return;
+        }
+        done();
+      });
+
+      it('should return 50 lists', done => {
+        request.get(`${url}/api/list`)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body.length).to.equal(50);
+          done();
+        });
+      });
+    });
+  });
 });
