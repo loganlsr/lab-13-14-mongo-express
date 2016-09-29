@@ -1,0 +1,41 @@
+{
+  "name": "lab-13-14-mongo-express",
+  "version": "1.0.0",
+  "description": "![cf](https://i.imgur.com/7v5ASc8.png) lab 13 single resource express/mongo api ======",
+  "main": "index.js",
+  "scripts": {
+    "test": "DEBUG='apple*' ./node_modules/mocha/bin/mocha",
+    "start": "DEBUG='apple*' node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loganlsr/lab-13-14-mongo-express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loganlsr/lab-13-14-mongo-express/issues"
+  },
+  "homepage": "https://github.com/loganlsr/lab-13-14-mongo-express#readme",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.1",
+    "debug": "^2.2.0",
+    "express": "^4.14.0",
+    "http-errors": "^1.5.0",
+    "mongoose": "^4.6.1",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.6.1",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.1.0",
+    "mocha-eslint": "^3.0.1",
+    "superagent": "^2.3.0"
+  }
+}
