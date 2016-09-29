@@ -116,6 +116,7 @@ describe('testing route /api/list', function(){
           expect(res.status).to.equal(204);
           done();
         });
+        done();
       });
     });
 

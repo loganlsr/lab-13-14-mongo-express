@@ -18,17 +18,20 @@ listRouter.post('/api/list', jsonParser, function(req, res, next){
 listRouter.get('/api/list/:id', function(req, res, next){
   List.findById(req.params.id)
   .then(list => res.json(list))
-  .catch(next);
+  .catch(err => next(createError(404, err.message)));
 });
 
 listRouter.delete('/api/list/:id', function(req, res, next){
-  List.findByIdAndDelete(req.params.id)
-  .then(() => res.sendstatus(204))
+  List.findByIdAndRemove(req.params.id)
+  .then(() => res.status(204))
   .catch(err => next(createError(404, err.message)));
 });
 
 listRouter.put('/api/list/:id', jsonParser, function(req, res, next){
   List.findByIdAndUpdate(req.params.id, req.body, {new: true})
   .then(list => res.json(list))
-  .catch(err => next(createError(404, err.message)));
+  .catch(err => {
+    if (err.name === 'ValidationError') return next(err);
+    next(createError(404, err.message));
+  });
 });
