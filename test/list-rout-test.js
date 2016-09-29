@@ -132,29 +132,90 @@ describe('testing route /api/list', function(){
   });
 
   describe('testing PUT requests', function() {
+    describe('with valid id', function(){
 
-    before( done => {
-      exampleList.timestamp = new Date();
-      new List(exampleList).save()
-      .then( list => {
-        this.tempList = list;
-        done();
-      })
-      .catch(done);
-    });
-
-    after( done => {
-      delete exampleList.timestamp;
-      if(this.tempList){
-        List.remove({})
-        .then(() => done())
+      before( done => {
+        exampleList.timestamp = new Date();
+        new List(exampleList).save()
+        .then( list => {
+          this.tempList = list;
+          done();
+        })
         .catch(done);
-        return;
-      }
-      done();
+      });
+
+      after( done => {
+        delete exampleList.timestamp;
+        if(this.tempList){
+          List.remove({})
+          .then(() => done())
+          .catch(done);
+          return;
+        }
+        done();
+      });
+
+      it('should return a list with a status 200', done => {
+        let updateData = {type:'bad-apple', color: 'black', size: 'mini'};
+        request.put(`${url}/api/list/${this.tempList._id}`)
+        .send(updateData)
+        .end((err, res) => {
+          if (err) return done(err);
+          expect(res.status).to.equal(200);
+          expect(res.body.type).to.equal(updateData.type);
+          expect(res.body.color).to.equal(updateData.color);
+          expect(res.body.size).to.equal(updateData.size);
+          this.tempList = res.body;
+          done();
+        });
+      });
     });
 
+    describe('with no body provided', function() {
 
+      before( done => {
+        exampleList.timestamp = new Date();
+        new List(exampleList).save()
+        .then( list => {
+          this.tempList = list;
+          done();
+        })
+        .catch(done);
+      });
 
+      after( done => {
+        delete exampleList.timestamp;
+        if(this.tempList) {
+          List.remove({})
+          .then(() => done())
+          .catch(done);
+          return;
+        }
+        done();
+      });
+
+      it('should return a 400 bad request', done => {
+        let updateData = 'good day';
+        request.put(`${url}/api/list/${this.tempList._id}`)
+        .set('Content-Type', 'application/json')
+        .send(updateData)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
+
+    describe('with no body', function() {
+
+      it('should 404 not found', done => {
+        request.put(`${url}/api/list/no-list`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });
   });
+
 });
