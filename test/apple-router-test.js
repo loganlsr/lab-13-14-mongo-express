@@ -50,8 +50,40 @@ describe('testing apple routes', function(){
         .send(exampleApple)
         .end((err, res) => {
           if(err) return done(err);
+          expect(res.status).to.equal(200);
           expect(res.body.type).to.equal(exampleApple.type);
           expect(res.body.listID).to.equal(this.tempList._id.toString());
+          done();
+        });
+      });
+    });
+
+    describe('with an invalid list id and appleBody', function(){
+
+      before(done => {
+        new List(exampleList).save()
+        .then( list => {
+          this.tempList = list;
+          done();
+        })
+        .catch(done);
+      });
+
+      after(done => {
+        Promise.all([
+          List.remove({}),
+          Apple.remove({}),
+        ])
+        .then(() => done())
+        .catch(done);
+      });
+
+      it('should return error code 400', done => {
+        request.post(`${url}/api/list/${this.tempList.id}/apple`)
+        .send()
+        .set('Content-Type', 'application/json')
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
           done();
         });
       });

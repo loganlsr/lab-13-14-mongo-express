@@ -51,6 +51,18 @@ describe('testing route /api/list', function(){
         });
       });
     });
+
+    describe('with an invalid body', function(){
+
+      it('should not return a 400', done => {
+        request.post(`${url}/api/list/`)
+        .send()
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done();
+        });
+      });
+    });
   });
 
   describe('testing GET requests', function(){
